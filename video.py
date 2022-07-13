@@ -35,6 +35,7 @@ while(True):
 		# file 'filename.avi'
 		result.write(frame)
 		frame=frame+1
+		print(frame)
 		# Display the frame
 		# saved in the file
 		# cv2.imshow('Frame', frame)
