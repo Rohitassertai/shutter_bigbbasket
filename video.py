@@ -7,7 +7,7 @@ import cv2
 
 # Create an object to read
 # from camera
-video = cv2.VideoCapture('rtsp://admin:bb%4012345@192.168.2.9:554/h265/main/ch32/main/av_stream ')
+video = cv2.VideoCapture('rtsp://admin:bb%4012345@192.168.2.9:554/h265/main/ch32/main/av_stream')
 
 # We need to check if camera
 # is opened previously or not
@@ -24,9 +24,7 @@ size = (frame_width, frame_height)
 # Below VideoWriter object will create
 # a frame of above defined The output
 # is stored in 'filename.avi' file.
-result = cv2.VideoWriter('filename.avi',
-						cv2.VideoWriter_fourcc(*'MJPG'),
-						25, size)
+result = cv2.VideoWriter('filename.avi',cv2.VideoWriter_fourcc(*'MJPG'),25, size)
 	
 while(True):
 	ret, frame = video.read()
