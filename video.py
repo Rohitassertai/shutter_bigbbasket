@@ -25,7 +25,7 @@ size = (frame_width, frame_height)
 # a frame of above defined The output
 # is stored in 'filename.avi' file.
 result = cv2.VideoWriter('./filename.mp4',cv2.VideoWriter_fourcc(*'mp4v'),25, size)
-frame = 0	
+frame_nu = 0	
 while(True):
 	ret, frame = video.read()
 
@@ -34,8 +34,8 @@ while(True):
 		# Write the frame into the
 		# file 'filename.avi'
 		result.write(frame)
-		frame=frame+1
-		print(frame)
+		frame_nu=frame_nu+1
+		print(frame_nu)
 		# Display the frame
 		# saved in the file
 		# cv2.imshow('Frame', frame)
