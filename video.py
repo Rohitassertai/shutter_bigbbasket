@@ -33,6 +33,7 @@ while(True):
 
 		# Write the frame into the
 		# file 'filename.avi'
+		cv2.imwrite(f'./frames/frame_{frame_nu}.jpg',frame)
 		result.write(frame)
 		frame_nu=frame_nu+1
 		print(frame_nu)
