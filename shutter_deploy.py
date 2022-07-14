@@ -71,7 +71,7 @@ def display():
 	template = cv2.imread('/home/rohit/Pictures/template.jpg',0)
 	w, h = template.shape[::-1]
 	data = []
-	streamLinks = ['/home/rohit/Videos/test_shutter']
+	streamLinks = ['rtsp://admin:bb%4012345@192.168.2.9:554/h265/main/ch32/main/av_stream']
 				   # '/home/rohit/Videos/test_shutter']
 				   # '/home/rohit/Videos/test_shutter']
 				   # '/home/rohit/Videos/test_shutter',
