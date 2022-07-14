@@ -1,0 +1,12 @@
+[Unit]
+Description = restart_sack
+After = multi-user.target
+
+[Service]
+Type = oneshot
+WorkingDirectory = /home/nvidia/scripts
+ExecStart = /usr/bin/python3 restart_shutter.py
+
+[Install]
+WantedBy = multi-user.target
+
