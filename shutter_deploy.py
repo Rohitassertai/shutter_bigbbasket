@@ -159,7 +159,7 @@ def display():
 							url = upload_file_to_s3(str_encode,im_id+'.jpg')
 							print(url)
 							upload_check[index_var] =True
-							insert_data_shutter(now.strftime("%Y-%m-%d"),now.strftime("%H:%M:%S"),'00:00:00',f'1_{index_var}',str(url))
+							insert_data_shutter(now.strftime("%Y-%m-%d"),now.strftime("%H:%M:%S"),'00:00:00',f'1_{index_var+1}',str(url))
 					
 					# result.write(frame_copy)
 					frame_copy = cv2.resize(frame_copy,(1600,900),cv2.INTER_AREA)
