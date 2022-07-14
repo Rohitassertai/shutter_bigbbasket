@@ -68,7 +68,7 @@ def update_shutter_closed(close_time,camera_id,date):
 def display():
 
 	
-	template = cv2.imread('/home/rohit/Pictures/template.jpg',0)
+	template = cv2.imread('./template.jpg',0)
 	w, h = template.shape[::-1]
 	data = []
 	streamLinks = ['rtsp://admin:bb%4012345@192.168.2.9:554/h265/main/ch32/main/av_stream']
