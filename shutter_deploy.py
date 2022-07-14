@@ -117,15 +117,15 @@ def display():
 					
 					frame_copy = frame.copy()
 					frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-					frame = frame[101:603,655:1170]
+					frame = frame[114:538,685:1146]
 					res = cv2.matchTemplate(frame,template,cv2.TM_CCOEFF_NORMED)
 					min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 					top_left = max_loc
-					top_left = (655 + top_left[0], 101 + top_left[1])
+					top_left = (686 + top_left[0], 114 + top_left[1])
 					bottom_right = (top_left[0] + w, top_left[1] + h)
 					# print(top_left[1])
-					
-					if top_left[1] > 101 + 45:
+					cv2.rectangle(frame_copy,top_left, bottom_right, 255, 2)
+					if top_left[1] > 114 + 45:
 						cv2.rectangle(frame_copy,top_left, bottom_right, 255, 2)
 						shutter_closed[index_var] +=1
 						print(f'closed {index_var}',shutter_closed[index_var])
