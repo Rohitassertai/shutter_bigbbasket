@@ -163,7 +163,7 @@ def display():
 					
 					# result.write(frame_copy)
 					frame_copy = cv2.resize(frame_copy,(1600,900),cv2.INTER_AREA)
-					cv2.imshow(str(index_var),frame_copy)
+# 					cv2.imshow(str(index_var),frame_copy)
 					
 					# print(streamLinks[index_var])
 				except:
