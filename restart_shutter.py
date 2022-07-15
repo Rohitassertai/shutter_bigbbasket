@@ -12,7 +12,7 @@ while True:
         for proc in psutil.process_iter():
             procc = proc.cmdline()
             # sudo python3 deepstream-intrusion.py uri uri folder_name
-            if len(procc) >= 2 and "python3" in procc and "shutter_deploy.py" in procc:
+            if len(procc) >= 2 and "python" in procc and "shutter_deploy.py" in procc:
                 ds.append(proc.pid)
         # CHECK THE TIME CONDITION HERE
         current = datetime.datetime.now().time()
