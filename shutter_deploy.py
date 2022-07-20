@@ -2,7 +2,7 @@ import cv2
 import time
 from datetime import datetime
 # from utils_up import *
-from utils_up import query_update_shutter,query_push_shutter, query_all_data, get_mydb_cursor, commit_and_close,upload_file_to_s3
+from utils_up import query_update_shutter,query_push_shutter, query_all_data, get_mydb_cursor, commit_and_close,upload_file_to_s3,query_close_all_shutter
 from config_up import BUCKET_NAME, SECONDS_GAP_BEFORE_INTRUSION, FPS_INTRUSION
 import numpy as np
 
@@ -53,9 +53,9 @@ def insert_data_shutter(frame_date, frame_time,close_time, camera_id, image_url)
         cursor.close()
         mydb.close()
 
-def update_shutter_closed(close_time,camera_id,date):
+def update_shutter_closed(close_time,close_date,camera_id,date):
 	mydb, cursor = get_mydb_cursor()
-	params = (close_time,camera_id,date)
+	params = (close_time,close_date,camera_id,date)
 	_ = query_all_data(cursor, query_update_shutter, params)
 	mydb.commit()
 	if mydb.is_connected():
@@ -64,11 +64,27 @@ def update_shutter_closed(close_time,camera_id,date):
 
 	return 'updating close time'
 
+def close_all(close_time,close_date):
+	mydb, cursor = get_mydb_cursor()
+	params = (close_time,close_date)
+	_ = query_all_data(cursor, query_close_all_shutter, params)
+	mydb.commit()
+	if mydb.is_connected():
+	    cursor.close()
+	    mydb.close()
+
+	return 'Closing all'
+
 
 def display():
 
-	
-	template = cv2.imread('./template.jpg',0)
+	count = 0
+	now = datetime.now()
+	time_2 = now.strftime("%H:%M:%S")
+	date_2= now.strftime("%Y-%m-%d")
+	print(time_2,date_2)
+	print(close_all(time_2,date_2))
+	template = cv2.imread('/home/nvidia/shutter_bigbbasket/template.jpg',0)
 	w, h = template.shape[::-1]
 	data = []
 	streamLinks = ['rtsp://admin:bb%4012345@192.168.2.9:554/h265/main/ch32/main/av_stream']
@@ -82,6 +98,7 @@ def display():
 	time_limit = []
 	last_upload = []
 	shutter_closed = []
+	date_open = ''
 	for i in range(len(streamLinks)):
 		upload_check.append(False)
 		time_limit.append(0)
@@ -113,56 +130,71 @@ def display():
 			if i[1]:
 				
 				try:	
+					try:	
 					frame,capOpened = update_frame(i[0],i[1])
-					
+					time.sleep(0.1)
 					frame_copy = frame.copy()
 					frame = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-					frame = frame[114:538,685:1146]
+					frame = frame[0:1080,685:1146]
 					res = cv2.matchTemplate(frame,template,cv2.TM_CCOEFF_NORMED)
 					min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 					top_left = max_loc
-					top_left = (686 + top_left[0], 114 + top_left[1])
-					bottom_right = (top_left[0] + w, top_left[1] + h)
-					# print(top_left[1])
-					cv2.rectangle(frame_copy,top_left, bottom_right, 255, 2)
-					if top_left[1] > 114 + 45:
-						cv2.rectangle(frame_copy,top_left, bottom_right, 255, 2)
+					
+					top_left1 = (685+top_left[0],top_left[1])
+					bottom_right = (685+top_left[0] + w, top_left[1] + h)
+					print(top_left1,bottom_right)
+					#cv2.rectangle(frame_copy,top_left1, bottom_right, 255, 2)
+					
+					if top_left1[1] >= 110 :
+						count = 0
+						#cv2.rectangle(frame_copy,top_left, bottom_right, 255, 2)
 						shutter_closed[index_var] +=1
 						print(f'closed {index_var}',shutter_closed[index_var])
-						if upload_check[index_var] == True and shutter_closed[index_var] > 500:
-
-							now = datetime.now()
-							time_1 = now.strftime("%H%M%S")
-							print(update_shutter_closed(time_1,f'1_{index_var}',now.strftime("%Y-%m-%d")))
-							upload_check[index_var] = False
-					else:
-						shutter_closed[index_var] = 0
-						font = cv2.FONT_HERSHEY_SIMPLEX
-						org = (50, 50)
-						fontScale = 1
-						color = (0, 0, 255)
-						thickness = 2
-						cv2.putText(frame_copy, 'Door Open', org, font, 
-						           fontScale, color, thickness, cv2.LINE_AA)
-						# image_string = cv2.imencode('shutter1.jpg', frame_copy)[1].tostring()
-						# cv2.imwrite('shutter1.jpg',frame_copy)
-						if upload_check[index_var] == False:
-							now = datetime.now()
-							time_1 = now.strftime("%H%M%S")
-							date = now.strftime("%Y%m%d")
-							im_id = str(str(date)+str(time_1))
-							frame_to_upload = cv2.resize(frame_copy, (900, 600), cv2.INTER_CUBIC)
-							img_encode = cv2.imencode('.jpg', frame_to_upload)[1]
-							data_encode = np.array(img_encode)
-							str_encode = data_encode.tostring()
-							# url = upload_to_aws('/home/rohit/yolov5 latest/yolov5/shutter1.jpg','bucket-big-basket','shutter1.jpg')
-							url = upload_file_to_s3(str_encode,im_id+'.jpg')
-							print(url)
-							upload_check[index_var] =True
-							insert_data_shutter(now.strftime("%Y-%m-%d"),now.strftime("%H:%M:%S"),'00:00:00',f'1_{index_var+1}',str(url))
+						if upload_check[index_var] == True and shutter_closed[index_var] > 200:
+							try:
+								now = datetime.now()
+								time_1 = now.strftime("%H:%M:%S")
+								date_1= now.strftime("%Y-%m-%d")
+								print(time_1,date_1,date_open)
+								print(update_shutter_closed(time_1,date_1,f'1_{index_var}',date_open))
+								upload_check[index_var] = False
+							except:
+								pass
+					elif top_left1[1] < 110 :
+						
+						count = count+1
+						if count >=200:
+							try:	
+								shutter_closed[index_var] = 0
+								font = cv2.FONT_HERSHEY_SIMPLEX
+								org = (50, 50)
+								fontScale = 1
+								color = (0, 0, 255)
+								thickness = 2
+								cv2.putText(frame_copy, 'Door Open', org, font, 
+								           fontScale, color, thickness, cv2.LINE_AA)
+								# image_string = cv2.imencode('shutter1.jpg', frame_copy)[1].tostring()
+								# cv2.imwrite('shutter1.jpg',frame_copy)
+								if upload_check[index_var] == False:
+									now = datetime.now()
+									time_1 = now.strftime("%H:%M:%S")
+									date= now.strftime("%Y-%m-%d")
+									date_open = date
+									im_id = str(str(date)+str(time_1))
+									frame_to_upload = cv2.resize(frame_copy, (900, 600), cv2.INTER_CUBIC)
+									img_encode = cv2.imencode('.jpg', frame_to_upload)[1]
+									data_encode = np.array(img_encode)
+									str_encode = data_encode.tostring()
+									# url = upload_to_aws('/home/rohit/yolov5 latest/yolov5/shutter1.jpg','bucket-big-basket','shutter1.jpg')
+									url = upload_file_to_s3(str_encode,im_id+'.jpg')
+									print(url)
+									upload_check[index_var] =True
+									insert_data_shutter(now.strftime("%Y-%m-%d"),now.strftime("%H:%M:%S"),'00:00:00',f'1_{index_var}',str(url))
+							except:
+								pass
 					
 					# result.write(frame_copy)
-					frame_copy = cv2.resize(frame_copy,(1600,900),cv2.INTER_AREA)
+					#frame_copy = cv2.resize(frame_copy,(1600,900),cv2.INTER_AREA)
 # 					cv2.imshow(str(index_var),frame_copy)
 					
 					# print(streamLinks[index_var])
