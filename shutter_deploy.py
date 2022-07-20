@@ -130,7 +130,7 @@ def display():
 			if i[1]:
 				
 				try:	
-					try:	
+						
 					frame,capOpened = update_frame(i[0],i[1])
 					time.sleep(0.1)
 					frame_copy = frame.copy()
