@@ -150,6 +150,7 @@ def display():
 						#cv2.rectangle(frame_copy,top_left, bottom_right, 255, 2)
 						shutter_closed[index_var] +=1
 						print(f'closed {index_var}',shutter_closed[index_var])
+						
 						if upload_check[index_var] == True and shutter_closed[index_var] > 200:
 							try:
 								now = datetime.now()
