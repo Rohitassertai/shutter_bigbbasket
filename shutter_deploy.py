@@ -84,7 +84,7 @@ def display():
 	date_2= now.strftime("%Y-%m-%d")
 	print(time_2,date_2)
 	print(close_all(time_2,date_2))
-	template = cv2.imread('/home/nvidia/shutter_bigbbasket/template.jpg',0)
+	template = cv2.imread('/home/nvidia/shutter_bigbbasket/newtemp.jpg',0)
 	w, h = template.shape[::-1]
 	data = []
 	streamLinks = ['rtsp://admin:bb%4012345@192.168.2.9:554/h265/main/ch32/main/av_stream']
