@@ -17,10 +17,18 @@ query_push_log = 'INSERT INTO log (event_date, event_time, event_tag, action, lo
 query_push_vehicle = 'INSERT INTO stats_vehicle (date, vehicle_camera_id, time, image, truck_in_time, truck_out_time, inward_outward, document) ' \
                      'VALUES (%s, %s, %s, %s, %s, %s, %s, %s);'
 
-query_push_shutter = 'INSERT INTO shutter (date,camera_id, open_time, close_time,image) ' \
+# query_push_shutter = 'INSERT INTO shutter (date,camera_id, open_time, close_time,image) ' \
+#                      'VALUES (%s, %s, %s, %s, %s);'
+
+# query_update_shutter = "UPDATE shutter SET close_time = %s  WHERE camera_id = %s and close_time = '00:00:00' and date = %s;"
+
+query_push_shutter = 'INSERT INTO shutter_new (date_open,camera_id, time_open, time_close,image) ' \
                      'VALUES (%s, %s, %s, %s, %s);'
 
-query_update_shutter = "UPDATE shutter SET close_time = %s  WHERE camera_id = %s and close_time = '00:00:00' and date = %s;"
+query_update_shutter = "UPDATE shutter_new SET time_close = %s, date_close = %s WHERE camera_id = %s and time_close = '00:00:00' and date_open = %s;"
+
+query_close_all_shutter = "UPDATE shutter_new SET time_close = %s, date_close = %s WHERE time_close = '00:00:00'"
+
 SHUTTER_OPEN = 'shutter open'
 SHUTTER_CLOSE = 'shutter close'
 
